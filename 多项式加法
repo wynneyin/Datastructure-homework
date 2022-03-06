@@ -1,0 +1,199 @@
+#include<iostream>
+using namespace std;
+template<class T>//结点(类模板)
+class Node
+{
+public:
+    T coefficient;//系数域
+    T exp;//指数
+    Node<T>* next=NULL;//指针域
+};
+template<class T>
+class LinkList
+{ 
+public:
+    Node<T>* head;//头结点
+    void CreateList();
+    void Insert(int index, int coefficient, T exp);
+    int  Length(Node<T>* head);
+    LinkList();
+    void PrintList(Node<T>* Object);
+    Node<T>* adder(LinkList<T>* a,LinkList<T>* b);
+    Node<T>* InitToZero(Node<T>* head, int len);
+};
+template<class T>
+LinkList<T>::LinkList()//初始化为空链表
+{
+    head = new Node<T>;
+    //head->coefficient = 0;
+    //head->exp = 0;
+    head->next = NULL;
+}
+template<class T>
+int LinkList<T>::Length(Node<T> * head)
+{
+    Node<T>* P = head;
+    int counter = 0;//定义长度
+    while (P->next != NULL)
+    {
+        P = P->next;
+        counter++;
+    }
+    return counter;
+}
+template<class T>
+Node<T>* LinkList<T>::InitToZero(Node<T>* head1, int len)
+{
+
+    Node<T>* p, * q;
+    p = head1;
+    for (int i = 0; i < len; i++)
+    {
+        q = new Node<T>;
+        q->exp = 0;
+        q->coefficient = 0;
+        q->next = NULL;
+        p->next = q;
+        p = q;
+    }
+    return head1;
+}
+template<class T>
+void LinkList<T>::Insert(int index, int coefficient, T exp)//data->指数
+{
+    Node<T>* p = head;
+    Node<T>*s=NULL;
+    if (index <= 0 )
+    {
+        cout << "插入的位置不合法";
+    }
+    else
+    {
+        for (int i = 0; i < index - 1; i++)
+        {
+            p = p->next;
+        }//指针p指向index-1节点
+        s = new Node<T>;        //挂载新的节点
+        s->next = NULL;
+        p->next = s;
+        s->exp = exp;
+        s->coefficient = coefficient;
+        cout << "插入成功";
+
+    }
+
+}
+template<class T>
+void LinkList<T>::CreateList()
+{
+    int length;
+    T exp, coefficient;
+    cout << "正在创建单链表(尾插),请输入你要创建的单链表的长度" << endl;
+    cin >> length;
+    for (int i = 1; i <=length; i++)
+    {
+        cout << "请输入第" << i << "个结点的元素值:";
+        cin >> coefficient;
+        cin >> exp;
+        Insert(i, coefficient, exp);//采用尾插方式进行创建单链表
+    }
+}
+template<class T>
+void LinkList<T>::PrintList(Node<T>* Object)
+{
+    Node<T>* p;
+    p = Object;
+    //cout << Length(Object);//测长度是否准确
+    for (int i = 0; i < Length(Object); i++)
+    {
+        cout << "  " << p->coefficient << "x" << p->exp ;
+       // cout << p->exp;
+        p = p->next;
+    }
+    cout << endl;
+}
+template<class T>
+Node<T>* LinkList<T>::adder(LinkList<T>* a,LinkList<T>* b)
+{
+    Node<T> *C, *p;
+    Node<T>* A = a->head;
+    Node<T>* B = b->head;
+    int lenA = Length(A); int lenB = Length(B);
+    cout << lenA << " " << lenB << "  ";
+    int len = lenA + lenB;
+    //int i, j, k;
+    C = new Node<T>;
+    C->next = NULL;
+    C = InitToZero(head, len+1);
+    Node<T>* tail = C;
+   // p = C;
+    A = A->next;
+    B = B->next;
+    //i = j = 0;
+    while (A && B)
+    {
+        if (A->exp > B->exp)
+        {
+            C->exp = A->exp;
+            C->coefficient = A->coefficient;
+            A = A->next;
+            C = C->next;
+        }
+        else if (A->exp < B->exp)
+        {
+            C->exp = B->exp;
+            C->coefficient = B->coefficient;
+            B = B->next;
+            C = C->next;
+        }
+        else if (A->exp == B->exp)
+        {
+            C->exp = A->exp;
+            C->coefficient = A->coefficient + B->coefficient;
+            A = A->next;
+            B = B->next;
+            C = C->next;
+        }
+    }
+
+        if (A)
+        {
+            while (A->next != NULL)
+            {
+                C->exp = A->exp;
+                C->coefficient = A->coefficient;
+                A = A->next;
+                C = C->next;
+            }
+        }
+
+          if (B)
+            {
+                while (B)
+                {
+                    C->exp = B->exp;
+                    C->coefficient = B->coefficient;
+                    B = B->next;
+                    C = C->next;
+                }
+             }
+    
+    PrintList(head);
+    return C;
+}
+int main()
+{
+    
+    LinkList<int> list1;
+    LinkList<int> list2;
+    LinkList<int> list3;
+    list1.CreateList();
+
+    list2.CreateList();
+    //list2.PrintList(list2.head);
+    LinkList<int>* a = &list1;
+    LinkList<int>* b = &list2;
+    list1.PrintList(a->head);
+    list3.adder(a,b);
+    
+   }
